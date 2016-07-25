@@ -32,5 +32,8 @@
   },
   "keywords": [
     "gruntplugin"
-  ]
+  ],
+  "dependencies": {
+    "async": "^2.0.1"
+  }
 }
