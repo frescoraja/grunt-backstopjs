@@ -51,28 +51,28 @@ module.exports = function(grunt) {
         child_process.exec('npm install', { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
-        }.bind(this);
+        }.bind(this));
       };
 
       this.genConfig = function(backstop_path, cb) {
         child_process.exec('gulp genConfig', { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
-        }.bind(this);
+        }.bind(this));
       };
 
       this.createReferences = function(backstop_path, cb) {
         child_process.exec('gulp reference', { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
-        }.bind(this);
+        }.bind(this));
       };
 
       this.runTests = function(backstop_path, cp) {
         child_process.exec('gulp test', { cwd: backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
-        }.bind(this);
+        }.bind(this));
       };
     }
     
