@@ -13,6 +13,8 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('backstopjs', 'BackstopJS test loader for grunt', function() {
   
     var options = this.options({
+      jsconfig_path: './backstop.js',
+      config_path: './backstop.json',
       backstop_path: './node_modules/backstopjs',
       test_path: './backstop_data',
       gen_config: false,
@@ -31,6 +33,9 @@ module.exports = function(grunt) {
     function BackstopJS(data, done) {
       this.backstop_path = path.join(cwd, data.backstop_path);
       this.test_path = path.join(cwd, data.test_path);
+      this.jsconfig_path = path.join(cwd, data.jsconfig_path);
+      this.config_path = path.join(cwd, data.config_path);
+      this.cmd_args = '-- --jsConfig=' + this.jsconfig_path + ' --configPath=' + this.config_path;
       this.options = {
         setup: data.setup,
         configure: data.configure,
@@ -55,21 +60,24 @@ module.exports = function(grunt) {
       };
 
       this.genConfig = function(backstop_path, cb) {
-        child_process.exec('gulp genConfig', { cwd: backstop_path }, function(err, stdout, stderr) {
+        var cmd = 'gulp genConfig ' + this.cmd_args;
+        child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
       };
 
       this.createReferences = function(backstop_path, cb) {
-        child_process.exec('gulp reference', { cwd: backstop_path }, function(err, stdout, stderr) {
+        var cmd = 'gulp reference ' + this.cmd_args;
+        child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
       };
 
       this.runTests = function(backstop_path, cp) {
-        child_process.exec('gulp test', { cwd: backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
+        var cmd = 'gulp test ' + this.cmd_args;
+        child_process.exec(cmd, { cwd: backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
