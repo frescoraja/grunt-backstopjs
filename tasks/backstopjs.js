@@ -60,7 +60,7 @@ module.exports = function(grunt) {
       };
 
       this.genConfig = function(backstop_path, cb) {
-        var cmd = 'gulp genConfig ' + this.cmd_args;
+        var cmd = 'npm run genConfig ' + this.cmd_args;
         child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
       };
 
       this.createReferences = function(backstop_path, cb) {
-        var cmd = 'gulp reference ' + this.cmd_args;
+        var cmd = 'npm run reference ' + this.cmd_args;
         child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
@@ -76,7 +76,7 @@ module.exports = function(grunt) {
       };
 
       this.runTests = function(backstop_path, cp) {
-        var cmd = 'gulp test ' + this.cmd_args;
+        var cmd = 'npm run test ' + this.cmd_args;
         child_process.exec(cmd, { cwd: backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
