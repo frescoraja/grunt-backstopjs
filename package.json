@@ -1,7 +1,7 @@
 {
   "name": "grunt-backstopjs",
   "description": "BackstopJS test loader for grunt",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "homepage": "https://github.com/dcarter/grunt-backstopjs",
   "author": {
     "name": "David Carter",

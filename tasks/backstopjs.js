@@ -54,40 +54,47 @@ module.exports = function(grunt) {
         }
       };
 
-      this.prepEnv = function(backstop_path, cb) {
-        child_process.exec('npm install', { cwd: backstop_path }, function(err, stdout, stderr) {
+      this.startServer = function() {
+        child_process.exec('npm run start', { cwd: this.backstop_path }, function(err, stdout, stderr) {
+          this.log(err, stdout, stderr);
+        }.bind(this));
+      }.bind(this);
+
+      this.prepEnv = function(cb) {
+        child_process.exec('npm install', { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
       };
 
-      this.genConfig = function(backstop_path, cb) {
+      this.genConfig = function(cb) {
         var cmd = 'npm run genConfig ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
+        child_process.exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
       };
 
-      this.createReferences = function(backstop_path, cb) {
+      this.createReferences = function(cb) {
         var cmd = 'npm run reference ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
+        child_process.exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
       };
 
-      this.report = function(backstop_path, cb) {
+      this.report = function(cb) {
+        this.startServer();
         var cmd = 'npm run openReport ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
+        child_process.exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
       };
 
-      this.runTests = function(backstop_path, cb) {
+      this.runTests = function(cb) {
         var cmd = 'npm run test ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
+        child_process.exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
@@ -99,7 +106,7 @@ module.exports = function(grunt) {
     async.series([
       function(cb) {
         if(this.options.gen_config) {
-          this.genConfig(this.backstop_path, function() {
+          this.genConfig(function() {
             cb();
           });
         } else {
@@ -109,7 +116,7 @@ module.exports = function(grunt) {
 
       function(cb) {
         if(this.options.prep_env) {
-          this.prepEnv(this.backstop_path, function() {
+          this.prepEnv(function() {
             cb();
           });
         } else {
@@ -119,7 +126,7 @@ module.exports = function(grunt) {
      
       function(cb) {
         if(this.options.create_references) {
-          this.createReferences(this.backstop_path, function() {
+          this.createReferences(function() {
             cb();
           });
         } else {
@@ -129,7 +136,7 @@ module.exports = function(grunt) {
 
      function(cb) {
       if(this.options.run_tests) {
-        this.runTests(this.backstop_path, function() {
+        this.runTests(function() {
           cb();
         });
       } else {
@@ -139,7 +146,7 @@ module.exports = function(grunt) {
 
      function(cb) {
        if(this.options.report) {
-         this.report(this.backstop_path, function() {
+         this.report(function() {
            cb();
          });
        } else {
