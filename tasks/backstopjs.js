@@ -37,8 +37,8 @@ module.exports = function(grunt) {
       this.config_path = path.join(cwd, data.config_path);
       this.cmd_args = '-- --jsConfig=' + this.jsconfig_path + ' --configPath=' + this.config_path;
       this.options = {
-        setup: data.setup,
-        configure: data.configure,
+        prep_env: data.prep_env,
+        gen_config: data.gen_config,
         create_references: data.create_references,
         run_tests: data.run_tests
       };
@@ -99,7 +99,7 @@ module.exports = function(grunt) {
 
       function(cb) {
         if(this.options.prep_env) {
-          this.preEnv(this.backstop_path, function() {
+          this.prepEnv(this.backstop_path, function() {
             cb();
           });
         } else {
