@@ -20,7 +20,8 @@ module.exports = function(grunt) {
       gen_config: false,
       prep_env: false,
       create_references: false,
-      run_tests: false
+      run_tests: false,
+      report: false
     });
 
     var child_process = require('child_process'),
@@ -40,7 +41,8 @@ module.exports = function(grunt) {
         prep_env: data.prep_env,
         gen_config: data.gen_config,
         create_references: data.create_references,
-        run_tests: data.run_tests
+        run_tests: data.run_tests,
+        report: data.report
       };
       this.done = done;
 
@@ -75,7 +77,15 @@ module.exports = function(grunt) {
         }.bind(this));
       };
 
-      this.runTests = function(backstop_path, cp) {
+      this.report = function(backstop_path, cb) {
+        var cmd = 'npm run openReport ' + this.cmd_args;
+        child_process.exec(cmd, { cwd: backstop_path }, function(err, stdout, stderr) {
+          this.log(err, stdout, stderr);
+          cb(true);
+        }.bind(this));
+      };
+
+      this.runTests = function(backstop_path, cb) {
         var cmd = 'npm run test ' + this.cmd_args;
         child_process.exec(cmd, { cwd: backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
@@ -125,7 +135,17 @@ module.exports = function(grunt) {
       } else {
         cb();
       }
-     }.bind(backstopLoader) 
+     }.bind(backstopLoader),
+
+     function(cb) {
+       if(this.options.report) {
+         this.report(this.backstop_path, function() {
+           cb();
+         });
+       } else {
+         cb();
+       }
+     }.bind(backstopLoader);
 
     ], function(err, result) {
       this.done(true);
