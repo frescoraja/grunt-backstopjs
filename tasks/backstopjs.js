@@ -145,7 +145,7 @@ module.exports = function(grunt) {
        } else {
          cb();
        }
-     }.bind(backstopLoader);
+     }.bind(backstopLoader)
 
     ], function(err, result) {
       this.done(true);
