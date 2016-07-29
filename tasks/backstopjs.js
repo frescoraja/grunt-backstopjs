@@ -77,7 +77,7 @@ module.exports = function(grunt) {
 
       this.createReferences = function(cb) {
         var cmd = 'npm run reference ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
+        child_process.exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*5000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
@@ -94,7 +94,7 @@ module.exports = function(grunt) {
 
       this.runTests = function(cb) {
         var cmd = 'npm run test ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*2000 }, function(err, stdout, stderr) {
+        child_process.exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*5000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
