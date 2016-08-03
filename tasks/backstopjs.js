@@ -20,7 +20,8 @@ module.exports = function(grunt) {
       gen_config: false,
       create_references: false,
       run_tests: false,
-      report: false
+      report: false,
+      compare: false
     });
 
     var exec = require('child_process').exec,
@@ -40,7 +41,8 @@ module.exports = function(grunt) {
         gen_config: data.gen_config,
         create_references: data.create_references,
         run_tests: data.run_tests,
-        report: data.report
+        report: data.report,
+        compare: data.compare
       };
       this.done = done;
 
@@ -61,6 +63,14 @@ module.exports = function(grunt) {
 
       this.genConfig = function(cb) {
         var cmd = 'npm run genConfig ' + this.cmd_args;
+        exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
+          this.log(err, stdout, stderr);
+          cb(true);
+        }.bind(this));
+      };
+
+      this.compare = function(cb) {
+        var cmd = 'npm run compare ' + this.cmd_args;
         exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
@@ -129,6 +139,16 @@ module.exports = function(grunt) {
      function(cb) {
       if(this.options.run_tests) {
         this.runTests(function() {
+          cb();
+        });
+      } else {
+        cb();
+      }
+     }.bind(backstopLoader),
+
+     function(cb) {
+      if(this.options.compare) {
+        this.compare(function() {
           cb();
         });
       } else {
