@@ -24,9 +24,10 @@ module.exports = function(grunt) {
       report: false
     });
 
-    var child_process = require('child_process'),
+    var exec = require('child_process').exec,
         async = require('async'),
-        path = require('path');
+        path = require('path'),
+        fs = require('fs');
 
     var cwd = process.cwd(),
         done = this.async();
@@ -55,21 +56,32 @@ module.exports = function(grunt) {
       };
 
       this.startServer = function() {
-        child_process.exec('npm run start', { cwd: this.backstop_path }, function(err, stdout, stderr) {
+        var cmd = 'npm run start ' + this.cmd_args;
+        exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
         }.bind(this));
       }.bind(this);
 
       this.prepEnv = function(cb) {
-        child_process.exec('npm install', { cwd: this.backstop_path }, function(err, stdout, stderr) {
-          this.log(err, stdout, stderr);
-          cb(true);
+        fs.stat('./node_modules', function(err, stats) {
+          if (err) {
+            this.log(err);
+          }
+          if (stats === undefined) {
+            exec('npm install', { cwd: this.backstop_path }, function(err, stdout, stderr) {
+              this.log(err, stdout, stderr);
+              cb(true);
+            }.bind(this));
+          } else {
+            console.log('"node_modules" already exists, skipping `npm install`...');
+            cb(true);
+          }
         }.bind(this));
       };
 
       this.genConfig = function(cb) {
         var cmd = 'npm run genConfig ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
+        exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
@@ -77,7 +89,7 @@ module.exports = function(grunt) {
 
       this.createReferences = function(cb) {
         var cmd = 'npm run reference ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*5000 }, function(err, stdout, stderr) {
+        exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*5000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
@@ -86,7 +98,7 @@ module.exports = function(grunt) {
       this.report = function(cb) {
         this.startServer();
         var cmd = 'npm run openReport ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
+        exec(cmd, { cwd: this.backstop_path }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
@@ -94,7 +106,7 @@ module.exports = function(grunt) {
 
       this.runTests = function(cb) {
         var cmd = 'npm run test ' + this.cmd_args;
-        child_process.exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*5000 }, function(err, stdout, stderr) {
+        exec(cmd, { cwd: this.backstop_path, maxBuffer: 1024*5000 }, function(err, stdout, stderr) {
           this.log(err, stdout, stderr);
           cb(true);
         }.bind(this));
