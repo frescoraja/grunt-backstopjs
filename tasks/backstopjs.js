@@ -18,7 +18,6 @@ module.exports = function(grunt) {
       backstop_path: './node_modules/backstopjs',
       test_path: './backstop_data',
       gen_config: false,
-      prep_env: false,
       create_references: false,
       run_tests: false,
       report: false
@@ -26,8 +25,7 @@ module.exports = function(grunt) {
 
     var exec = require('child_process').exec,
         async = require('async'),
-        path = require('path'),
-        fs = require('fs');
+        path = require('path');
 
     var cwd = process.cwd(),
         done = this.async();
@@ -39,7 +37,6 @@ module.exports = function(grunt) {
       this.config_path = path.join(cwd, data.config_path);
       this.cmd_args = '-- --jsConfig=' + this.jsconfig_path + ' --configPath=' + this.config_path;
       this.options = {
-        prep_env: data.prep_env,
         gen_config: data.gen_config,
         create_references: data.create_references,
         run_tests: data.run_tests,
@@ -61,23 +58,6 @@ module.exports = function(grunt) {
           this.log(err, stdout, stderr);
         }.bind(this));
       }.bind(this);
-
-      this.prepEnv = function(cb) {
-        fs.stat('./node_modules', function(err, stats) {
-          if (err) {
-            this.log(err);
-          }
-          if (stats === undefined) {
-            exec('npm install', { cwd: this.backstop_path }, function(err, stdout, stderr) {
-              this.log(err, stdout, stderr);
-              cb(true);
-            }.bind(this));
-          } else {
-            console.log('"node_modules" already exists, skipping `npm install`...');
-            cb(true);
-          }
-        }.bind(this));
-      };
 
       this.genConfig = function(cb) {
         var cmd = 'npm run genConfig ' + this.cmd_args;
