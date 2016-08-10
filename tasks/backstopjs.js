@@ -36,7 +36,7 @@ module.exports = function(grunt) {
       this.test_path = path.join(cwd, data.test_path);
       this.jsconfig_path = path.join(cwd, data.jsconfig_path);
       this.config_path = path.join(cwd, data.config_path);
-      this.cmd_args = '-- --jsConfig=' + this.jsconfig_path + ' --configPath=' + this.config_path;
+      this.cmd_args = '-- --jsConfig=' + this.jsconfig_path + ' --config=' + this.config_path;
       this.options = {
         gen_config: data.gen_config,
         create_references: data.create_references,
@@ -168,6 +168,6 @@ module.exports = function(grunt) {
 
     ], function(err, result) {
       this.done(true);
-    }.bind(backstopLoader))
+    }.bind(backstopLoader));
   });
 };
